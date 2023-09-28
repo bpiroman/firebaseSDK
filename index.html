@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/tokyo-night-dark.min.css">
+    <script src="./js/highlight.min.js"></script>
+    <title>Firebase SDK</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Initialisation</h1>
+        <pre><code class="language-javascript">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword , signInWithEmailAndPassword , signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import { getFirestore, collection, setDoc, addDoc, getDocs, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+const firebaseConfig = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: "",
+};
+        </code></pre>
+    </div>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
