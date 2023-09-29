@@ -13,8 +13,9 @@
         <h1>Initialisation</h1>
         <pre><code class="language-javascript">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword , signInWithEmailAndPassword , signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
-import { getFirestore, collection, setDoc, addDoc, getDocs, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+
 const firebaseConfig = {
     apiKey: "",
     authDomain: "",
@@ -23,6 +24,29 @@ const firebaseConfig = {
     messagingSenderId: "",
     appId: "",
     measurementId: "",
+};
+
+// Initialize firebase
+const firebaseApp = initializeApp(config);
+
+// Initialize auth && firestore with the 'firebaseApp' property
+export const auth = getAuth(firebaseApp);
+export const firestore = getFirestore(firebaseApp);
+        </code></pre>
+        <h1>Sign in with email and password</h1>
+        <pre><code class="language-javascript">
+import { auth } from "./firebaseInit";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+// Sign in with Email and password
+const emailSignIn = async (email, password) => {
+  await signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      console.log(userCredential.user);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
         </code></pre>
     </div>
