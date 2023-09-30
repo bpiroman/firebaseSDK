@@ -11,6 +11,7 @@
 <body>
     <div class="container">
         <h1>Initialisation</h1>
+        <h2>Setup</h2>
         <pre><code class="language-javascript">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
@@ -33,7 +34,8 @@ const firebaseApp = initializeApp(config);
 export const auth = getAuth(firebaseApp);
 export const firestore = getFirestore(firebaseApp);
         </code></pre>
-        <h1>Sign in with email and password</h1>
+        <h1>Authentication</h1>
+        <h2>Sign in with email and password</h2>
         <pre><code class="language-javascript">
 import { auth } from "./firebaseInit";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -47,6 +49,212 @@ const emailSignIn = async (email, password) => {
     .catch((error) => {
       console.log(error);
     });
+};
+        </code></pre>
+        <h2>Sign out</h2>
+        <pre><code>
+import { auth } from "./firebaseInit";
+import { signOut } from "firebase/auth";
+
+// Sign out
+const signOutUser = async () => {
+  await signOut(auth)
+    .then(() => {
+      console.log("User signed out");
+    })
+    .catch((error) => {
+      console.error("There was an error signing out");
+    });
+};
+        </code></pre>
+        <h2>Auth state listener</h2>
+        <pre><code>
+import { auth } from "./firebaseInit";
+import { onAuthStateChanged } from "firebase/auth";
+
+let signedIn = false;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in
+    signIn = true;
+  } else {
+    // No user signed in
+    signedIn = false;
+  }
+});
+        </code></pre>
+        <h1>Firestore</h1>
+        <h2>Add/Set Document</h2>
+        <pre><code>
+import { firestore } from "./firebaseInit";
+import { addDoc, setDoc, doc,, collection } from "firebase/firestore";
+
+// Collection/doc ref
+const collectionRef = collection(firestore, "some-collection");
+const documentRef = doc(firestore, "some-collection", "some-doc-name");
+
+// Add a document to a collection | Option #1
+const addDocOption1 = async () => {
+  await setDoc(collectionRef, "some-doc-name", {
+    contents: "some-data",
+  });
+};
+// Add a document to a collection | Option #2
+const addDocOption2 = async () => {
+  await setDoc(documentRef, {
+    contents: "some-data",
+  });
+};
+
+// Add a document to a collection (with an auto assigned doc ID) | Option #1
+const addDocWithAutoIdOption1 = async () => {
+  await addDoc(collectionRef, {
+    contents: "some-data",
+  });
+};
+
+// Add a document to a collection (with an auto assigned doc ID) | Option #2
+const addDocWithAutoIdOption2 = async () => {
+  await setDoc(collectionRef, {
+    contents: "some-data",
+  });
+};
+
+// Merging a document if it exists
+const mergeExisitngDoc = async () => {
+  await setDoc(
+    documentRef,
+    {
+      contents: "some-data",
+    },
+    { merge: true }
+  );
+};
+        </code></pre>
+        <h2>Update / delete a document</h2>
+        <pre><code>
+import { firestore } from "./firebaseInit";
+import {
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  arrayUnion,
+  arrayRemove,
+  doc,
+  collection,
+} from "firebase/firestore";
+
+// Collection/doc ref
+const collectionRef = collection(firestore, "some-collection");
+const documentRef = doc(firestore, "some-collection", "some-doc-name");
+
+// Update/merge a document if it exists
+const mergeExisitngDoc = async () => {
+  await setDoc(
+    documentRef,
+    {
+      contents: "some-data",
+    },
+    { merge: true }
+  )
+    .then(() => {
+      console.log("Updated/merged!");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// Update a document if it exists
+const updateExisitngDoc = async () => {
+  await updateDoc(documentRef, {
+    contents: "some-data",
+  })
+    .then(() => {
+      console.log("Updated!");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// Deleting a document
+const deleteDoc = async () => {
+  await deleteDoc(documentRef)
+    .then(() => {
+      console.log("Deleted!");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// Add/update elements in an array
+const updateAnArray = async () => {
+  await updateDoc(documentRef, {
+    recentUpdates: arrayUnion("8/17/2021"),
+  });
+};
+
+// Remove elements in an array
+const RemoveArrayItem = async () => {
+  await updateDoc(documentRef, {
+    recentUpdates: arrayRemove("7/04/2021"),
+  });
+};
+        </code></pre>
+        <h2>Querying and reading data</h2>
+        <pre><code>
+import { firestore } from "./firebaseInit";
+import {
+  query,
+  where,
+  limit,
+  getDocs,
+  collection,
+  doc,
+} from "firebase/firestore";
+
+// Collection/doc ref
+const collectionRef = collection(firestore, "some-collection");
+const documentRef = doc(firestore, "some-collection", "some-doc-name");
+
+// Get/read a document once
+const getDocData = async () => {
+  const docSnap = await getDoc(documentRef);
+
+  if (docSnap.exists()) {
+    console.log("Document data:", doc.data());
+  }
+};
+
+// Use a query to get collection docs
+const getCollectionDocs = async (collection) => {
+  const collectionQuery = query(
+    collectionRef,
+    where("some-data", "==", true),
+    limit(25)
+  );
+  const querySnapshot = await getDocs(collectionQuery);
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    console.log(data);
+  });
+};
+
+// Use a query with collection listener
+const collectionListener = (collection) => {
+  const collectionQuery = query(collectionRef, where("some-data", "==", true));
+
+  onSnapshot(collectionQuery, (querySnapshot) => {
+    let dataArray = [];
+    querySnapshot.forEach((doc) => {
+      dataArray.push(doc.data());
+    });
+    dataArray.map((d) => console.log(d));
+  });
 };
         </code></pre>
     </div>
